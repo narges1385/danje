@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fa">
+    <head>
+        <title>کافه دانژه</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400..700&family=Marhey:wght@300..700&display=swap" rel="stylesheet">
+        
+        <link rel="stylesheet" href="../static/css/menu.css">
+    </head>
+    <body>
+        <div class="main1">
+            <a href="login.html">ورود</a>
+            <h1 class="title">کافه دانژه</h1>
+            <img src="../static/images/logo.JPG" alt="لوگوی کافه دانژه" class="logo">
+        </div>
+        <div class="main2">
+            <div class="tabs">
+                <button onclick="showTab('info')" id="infoBtn" class="active">اطلاعات ما</button>
+                <button onclick="showTab('menu')" id="menuBtn">منو</button>
+            </div>
+            
+            <div id="info" class="tab-content">
+                <!-- محتوای اطلاعات -->
+            </div>
+            
+            <div id="menu" class="tab-content" style="display: none;">
+                <div class="iconlists">
+                <ul>
+                    <li><a href="#icon10"><img src="../static/images/icon10.JPG"><span class="caption">صبحانه</span></a></li>
+                    <li><a href="#icon9"><img src="../static/images/icon9.JPG"><span class="caption">کیک و دسر</span></a></li>
+                    <li><a href="#icon8"><img src="../static/images/icon8.JPG"><span class="caption">اسموتی</span></a></li>
+                    <li><a href="#icon7"><img src="../static/images/icon7.JPG"><span class="caption">نوشیدنی‌ سرد</span></a></li>
+                    <li><a href="#icon6"><img src="../static/images/icon6.JPG"><span class="caption">ماکتیل</span></a></li>
+                    <li><a href="#icon5"><img src="../static/images/icon5.JPG"><span class="caption">میلک شیک</span></a></li>
+                    <li><a href="#icon4"><img src="../static/images/icon4.JPG"><span class="caption">دمنوش گیاهی</span></a></li>
+                    <li><a href="#icon3"><img src="../static/images/icon3.JPG"><span class="caption">چای</span></a></li>
+                    <li><a href="#icon2"><img src="../static/images/icon2.JPG"><span class="caption">نوشیدنی‌ سرد بر پایه اسپرسو</span></a></li>
+                    <li><a href="#icon1"><img src="../static/images/icon1.JPG"><span class="caption">نوشیدنی‌ گرم بر پایه اسپرسو</span></a></li>
+                </ul>
+                </div>
+
+                <!-- دسته بندی‌ها -->
+                <p class="title" id="icon1">نوشیدنی‌ گرم بر پایه اسپرسو</p>
+                <div class="menu1" data-category-id="1">
+                    <div class="product-list"></div>
+                </div>
+
+                <p class="title" id="icon2">نوشیدنی‌ سرد بر پایه اسپرسو</p>
+                <div class="menu1" data-category-id="2">
+                    <div class="product-list"></div>
+                </div>
+
+                <p class="title" id="icon3">چای</p>
+                <div class="menu1" data-category-id="3">
+                    <div class="product-list"></div>
+                </div>
+
+                <p class="title" id="icon4">دمنوش گیاهی</p>
+                <div class="menu1" data-category-id="4">
+                    <div class="product-list"></div>
+                </div>
+
+                <p class="title" id="icon5">میلک شیک</p>
+                <div class="menu1" data-category-id="5">
+                    <div class="product-list"></div>
+                </div>
+
+                <p class="title" id="icon6">ماکتیل</p>
+                <div class="menu1" data-category-id="6">
+                    <div class="product-list"></div>
+                </div>
+
+                <p class="title" id="icon7">نوشیدنی‌ سرد</p>
+                <div class="menu1" data-category-id="7">
+                    <div class="product-list"></div>
+                </div>
+
+                <p class="title" id="icon8">اسموتی</p>
+                <div class="menu1" data-category-id="8">
+                    <div class="product-list"></div>
+                </div>
+
+                <p class="title" id="icon9">کیک و دسر</p>
+                <div class="menu1" data-category-id="9">
+                    <div class="product-list"></div>
+                </div>
+
+                <p class="title" id="icon10">صبحانه</p>
+                <div class="menu1" data-category-id="10">
+                    <div class="product-list"></div>
+                </div>
+            </div>
+
+            <!-- مودال اسلایدشو -->
+            <div id="imageModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <div class="slideshow-container">
+                        <div class="slideshow">
+                            <div class="slide active">
+                                <img src="" alt="">
+                            </div>
+                        </div>
+                        <button class="prev">&#10094;</button>
+                        <button class="next">&#10095;</button>
+                        <div class="dots-container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="menu-display.js"></script>
+    </body>
+</html>

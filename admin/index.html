@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پنل مدیریت کافه دانژه</title>
+    <link rel="stylesheet" href="admin-style.css">
+</head>
+<body>
+    <div class="admin-container">
+        <header class="admin-header">
+            <h1>🎯 پنل مدیریت کافه دانژه</h1>
+            <div class="admin-actions">
+                <button onclick="location.reload()">🔄 بروزرسانی</button>
+                <button onclick="exportData()">📤 خروجی</button>
+                <button onclick="importData()">📥 ورودی</button>
+            </div>
+        </header>
+
+        <main class="admin-main">
+            <section class="category-section">
+                <label for="categorySelect">دسته‌بندی:</label>
+                <select id="categorySelect" onchange="adminManager.onCategoryChange()">
+                    <option value="1">☕ نوشیدنی گرم بر پایه اسپرسو</option>
+                    <option value="2">🧊 نوشیدنی سرد بر پایه اسپرسو</option>
+                    <option value="3">🍵 چای</option>
+                    <option value="4">🌿 دمنوش گیاهی</option>
+                    <option value="5">🥛 میلک شیک</option>
+                    <option value="6">🍹 ماکتیل</option>
+                    <option value="7">🥤 نوشیدنی سرد</option>
+                    <option value="8">🥤 اسموتی</option>
+                    <option value="9">🍰 کیک و دسر</option>
+                    <option value="10">🍳 صبحانه</option>
+                </select>
+                
+                <button class="btn-primary" onclick="adminManager.showAddItemForm()">
+                    ➕ افزودن آیتم جدید
+                </button>
+            </section>
+
+            <section class="stats-section">
+                <div class="stat-card">
+                    <span class="stat-number" id="totalItems">0</span>
+                    <span class="stat-label">کل آیتم‌ها</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="activeItems">0</span>
+                    <span class="stat-label">فعال</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="inactiveItems">0</span>
+                    <span class="stat-label">غیرفعال</span>
+                </div>
+            </section>
+
+            <section class="items-section">
+                <h2 id="currentCategoryTitle">آیتم‌های نوشیدنی گرم بر پایه اسپرسو</h2>
+                <div class="items-list" id="itemsList"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- مودال افزودن/ویرایش آیتم -->
+    <div id="itemModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">افزودن آیتم جدید</h3>
+                <span class="close" onclick="adminManager.hideItemForm()">&times;</span>
+            </div>
+            
+            <form id="itemForm" onsubmit="adminManager.handleFormSubmit(event)">
+                <input type="hidden" id="editItemId">
+                <input type="hidden" id="editItemCategory">
+                
+                <div class="form-group">
+                    <label for="itemName">نام آیتم:</label>
+                    <input type="text" id="itemName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="itemPrice">قیمت (تومان):</label>
+                    <input type="number" id="itemPrice" min="0" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="itemImage">عکس‌ها (می‌توانید چند عکس انتخاب کنید):</label>
+                    <input type="file" id="itemImage" accept="image/*" multiple onchange="adminManager.previewImage(event)">
+                    <div class="file-info" id="fileInfo"></div>
+                    <div id="imagePreview" class="image-preview"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="itemActive">وضعیت:</label>
+                    <select id="itemActive">
+                        <option value="true">فعال</option>
+                        <option value="false">غیرفعال</option>
+                    </select>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">💾 ذخیره</button>
+                    <button type="button" class="btn-secondary" onclick="adminManager.hideItemForm()">❌ انصراف</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="admin-script.js"></script>
+</body>
+</html>
