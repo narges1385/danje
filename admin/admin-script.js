@@ -112,7 +112,7 @@ class AdminMenuManager {
         const div = document.createElement('div');
         div.className = 'admin-item';
         
-        const firstImage = item.images && item.images.length > 0 ? item.images[0] : '../static/images/placeholder.jpg';
+        const firstImage = item.images && item.images.length > 0 ? item.images[0] : 'static/images/placeholder.jpg';
         const imagesCount = item.images ? item.images.length : 0;
         
         div.innerHTML = `
@@ -152,10 +152,16 @@ class AdminMenuManager {
         this.tempImages = [];
         document.getElementById('itemImage').multiple = true;
         document.getElementById('itemModal').style.display = 'block';
+        
+        // جلوگیری از اسکرول بدنه
+        document.body.style.overflow = 'hidden';
     }
 
     hideItemForm() {
         document.getElementById('itemModal').style.display = 'none';
+        
+        // بازگشت اسکرول بدنه
+        document.body.style.overflow = 'auto';
     }
 
     previewImage(event) {
@@ -246,6 +252,9 @@ class AdminMenuManager {
             this.updateImagePreview();
             
             document.getElementById('itemModal').style.display = 'block';
+            
+            // جلوگیری از اسکرول بدنه
+            document.body.style.overflow = 'hidden';
         }
     }
 
@@ -331,6 +340,13 @@ class AdminMenuManager {
                 this.hideItemForm();
             }
         };
+
+        // بستن مودال با کلید ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                this.hideItemForm();
+            }
+        });
     }
 }
 
