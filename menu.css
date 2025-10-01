@@ -1,4 +1,4 @@
-html{
+            html{
                 scroll-behavior: smooth;
             }
             body{
@@ -27,14 +27,23 @@ html{
                 float: left;
                 text-decoration: none;
             }
-            .title{
+            .title1 , .title{
                 font-family: "El Messiri", sans-serif;
-                font-size: 10vw;
                 text-align: center;  
-                color: #5a341f;
-                text-shadow: 1vw 0.7vw #8D7B68;
+                color: #533120;
+                text-shadow: 0.5vw 0.7vw #8D7B68;
                 margin: 0;
                 padding: 2vw 0;
+                font-size: 5vw;
+            }
+            .title1{
+                font-size: 9vw;
+            }
+            .line{
+                width: 50vw;
+                border-color: #57321e;
+                background-color: #513222;
+                height: 1px;
             }
             .tabs {
                 display: flex;
@@ -109,7 +118,8 @@ html{
                 border-radius: 0;
             }
             .iconlists img{
-                object-fit: cover;
+                width: 15vw !important;
+                height: 15vw !important;
             }
             .caption{
                 white-space: normal;
@@ -126,86 +136,18 @@ html{
                 display: flex;
                 flex-direction: column;
                 padding: 15px;
-                border: 2px solid #5a341f;
                 margin-top: 3vw; 
                 align-items: center;
             }
-            .product-inf {
-                align-self: flex-start;
-                text-align: right;
-                width: 100%;
-            }
-            .name {
-                font-size: 5vw;
-                margin: 2vw 0 1vw 0;
-            }
-
-            .price {
-                font-size: 4vw;
-                color: #5a341f;
-                font-weight: 600;
-                margin: 0;
-            }
-            .menu1 img{
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-
-            }
-            .product-img {
-                position: relative;
-                overflow: hidden;
-                width: 100%; 
-                height: 100vw;
-                margin: 3vw;
-            }
-            .product-img img{
-                position: absolute;
-                top: 0;  
-                left: 0;  
-                width: 100%;  
-                height: 100%;  
-                opacity: 0;  
-                transition: opacity 0.3s ease;
-                object-fit: cover;  
-            }
-            .product-img img.active{
-                opacity: 1;
-            }
-            .nav-btn{
-                position: absolute;
-                top: 50%;
-                transform: translateY(-50%);
-                background: rgba(90, 52, 31, 0.3); 
-                color: #5a341f; 
-                border: none; 
-                width: 6vw; 
-                height: 6vw; 
-                border-radius: 50%; 
-                cursor: pointer; 
-                z-index: 10; 
-                font-size: 5vw;
-            }
-            .prev-btn{
-                right: 10px;
-            }
-            .next-btn{
-                left: 10px;
-            }
-            .title{
-                font-size: 6vw;
-            }
-            .product-gallery {
-    position: relative;
-    margin-bottom: 1rem;
-    border-radius: 10px;
-    overflow: hidden;
-}
+            
 
 .slideshow-container {
     position: relative;
-    width: 100%;
-    height: 250px;
+    width: 80vw;
+    height: auto;
+    margin: 0 -4vw;
+    margin-bottom: 15px;
+    padding: 3vw;
 }
 .slide {
     display: none;
@@ -244,27 +186,6 @@ html{
 
 .slider-dot.active {
     background: white;
-}
-
-.slider-arrows {
-    position: absolute;
-    top: 50%;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    transform: translateY(-50%);
-    padding: 0 10px;
-}
-
-.arrow {
-    background: rgba(0,0,0,0.5);
-    color: white;
-    border: none;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 16px;
 }
 
 .gallery-indicator {
@@ -320,7 +241,7 @@ html{
 .slideshow-container-full {
     position: relative;
     width: 100%;
-    height: 100%;
+    height: 200px;
 }
 
 .slide-full {
@@ -396,28 +317,103 @@ html{
     grid-column: 1 / -1;
 }
 
-/* رسپانسیو */
-@media (max-width: 768px) 
-    .product-list {
-        grid-template-columns: 1fr;
-        padding: 1rem;
-    }
-    
-    .main1 {
-        flex-direction: column;
-        
-    }
-    
-    .main1 .title {
-        font-size: 2rem;
-    }
-    
-    .iconlists ul {
-        
-    }
     
     .iconlists img {
         width: 60px;
         height: 60px;
     }
+    /* مخفی کردن فلش‌ها */
+.slider-arrows {
+    display: none !important;
+}
+
+/* بهبود استایل برای تجربه لمسی بهتر */
+.slideshow-container {
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    touch-action: pan-y;
+}
+
+.slideshow-container:active {
+    cursor: grabbing;
+}
+
+/* بهبود دات‌ها برای موبایل */
+.slider-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.5);
+    cursor: pointer;
+    border: none;
+}
+
+.slider-dot.active {
+    background: white;
+    transform: scale(1.2);
+}
+
+/* مخفی کردن فلش‌های مودال */
+.prev, .next {
+    display: none !important;
+}
+/* محصولات - اسم و قیمت سمت راست */
+.product {
+    background: #8D7B68;
+    padding: 4vw;
+    margin: 2vw 0;
+    border-radius: 15px;
+    border: 2px solid #5a341f;
+    font-family: 'El Messiri', sans-serif;
+    color: #3d2315;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    text-align: right;
+    direction: rtl;
+}
+
+.product-name {
+    font-size: 5vw;
+    color: #3d2315;
+    font-weight: bold;
+    text-align: right;
+    margin: 0;
+}
+
+.product-price {
+    font-size: 4vw;
+    font-weight: bold;
+    color: #533120;
+    text-align: left;
+    margin: 0;
+}
+
+/* برای موبایل */
+@media (max-width: 768px) {
+    .product-info {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
     
+    .product-name {
+        text-align: right;
+        font-size: 4.5vw;
+    }
+    
+    .product-price {
+        text-align: left;
+        font-size: 4vw;
+    }
+}

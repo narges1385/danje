@@ -3,6 +3,10 @@ class MenuDisplay {
         this.menuData = null;
         this.currentSlideIndex = 0;
         this.currentProductImages = [];
+        this.touchStartX = 0;
+        this.touchEndX = 0;
+        this.isDragging = false;
+        this.dragStartX = 0;
         this.init();
     }
 
@@ -11,6 +15,7 @@ class MenuDisplay {
         this.renderAllCategories();
         this.initImageModal();
         
+        // رفرش خودکار هر 30 ثانیه
         setInterval(() => {
             this.loadMenuData().then(() => this.renderAllCategories());
         }, 30000);
@@ -35,9 +40,18 @@ class MenuDisplay {
         if (savedData) {
             this.menuData = JSON.parse(savedData);
         } else {
+            // داده اولیه برای 10 دسته‌بندی
             this.menuData = {
-                '1': [], '2': [], '3': [], '4': [], '5': [],
-                '6': [], '7': [], '8': [], '9': [], '10': []
+                '1': [],
+                '2': [],
+                '3': [],
+                '4': [],
+                '5': [],
+                '6': [],
+                '7': [],
+                '8': [],
+                '9': [],
+                '10': []
             };
         }
     }
@@ -58,7 +72,7 @@ class MenuDisplay {
         container.innerHTML = '';
 
         if (activeItems.length === 0) {
-            container.innerHTML = '<div class="empty-message">آیتمی برای نمایش وجود ندارد</div>';
+            container.innerHTML = '<div class="empty-message" style="color: #3d2315; border: 2px solid #5a341f; padding: 3vw 30vw; display: block; font-family: \'El Messiri\', sans-serif;">آیتمی برای نمایش وجود ندارد</div>';
             return;
         }
 
@@ -69,38 +83,44 @@ class MenuDisplay {
     }
 
     createItemElement(item) {
-        const div = document.createElement('div');
-        div.className = 'product';
-        
-        const imagesHTML = this.createProductGallery(item.images, item.name, item.id);
-        
-        div.innerHTML = `
-            <div class="product-gallery">
-                ${imagesHTML}
-            </div>
-            <h3>${item.name}</h3>
-            <p class="price">${item.price.toLocaleString()} تومان</p>
-        `;
-        
-        // اضافه کردن event listener برای باز کردن مودال
-        const galleryContainer = div.querySelector('.slideshow-container');
-        if (galleryContainer) {
-            galleryContainer.addEventListener('click', () => {
-                this.openImageModal(item.images, item.name);
-            });
-        }
-        
-        return div;
-    }
-
+    const div = document.createElement('div');
+    div.className = 'product';
+    div.style.cssText = `
+        background: #8D7B68;
+        padding: 4vw;
+        margin: 2vw 0;
+        border-radius: 15px;
+        border: 2px solid #5a341f;
+        font-family: 'El Messiri', sans-serif;
+        color: #3d2315;
+        overflow: hidden;
+    `;
+    
+    const imagesHTML = this.createProductGallery(item.images, item.name, item.id);
+    
+    div.innerHTML = `
+        <div class="product-gallery">
+            ${imagesHTML}
+        </div>
+        <div class="product-info">
+            <h3 class="product-name">${item.name}</h3>
+            <p class="product-price">${item.price.toLocaleString()} تومان</p>
+        </div>
+    `;
+    
+    // اضافه کردن event listeners برای سوایپ
+    this.attachSwipeEvents(div, item.id);
+    
+    return div;
+}
     createProductGallery(images, productName, productId) {
         if (!images || images.length === 0) {
-            return '<img src="../static/images/placeholder.jpg" alt="بدون عکس">';
+            return '<img src="static/images/placeholder.jpg" alt="بدون عکس" style="width: 100%; height: 200px; object-fit: cover; border-radius: 10px;">';
         }
         
         if (images.length === 1) {
             return `
-                <div class="slideshow-container">
+                <div class="slideshow-container" data-product-id="${productId}">
                     <div class="slide active">
                         <img src="${images[0]}" alt="${productName}">
                     </div>
@@ -131,11 +151,95 @@ class MenuDisplay {
                     <div class="slider-nav">
                         ${dotsHTML}
                     </div>
-                    <div class="gallery-indicator" onclick="event.stopPropagation(); menuDisplay.openImageModal(${JSON.stringify(images).replace(/"/g, '&quot;')}, '${productName}')">
-                        +${images.length - 1} عکس دیگر
-                    </div>
                 </div>
             `;
+        }
+    }
+
+    attachSwipeEvents(container, productId) {
+        const slideshow = container.querySelector('.slideshow-container');
+        if (!slideshow) return;
+
+        // رویدادهای لمسی برای موبایل
+        slideshow.addEventListener('touchstart', (e) => this.handleTouchStart(e, productId));
+        slideshow.addEventListener('touchmove', (e) => this.handleTouchMove(e));
+        slideshow.addEventListener('touchend', (e) => this.handleTouchEnd(e, productId));
+
+        // رویدادهای موس برای دسکتاپ
+        slideshow.addEventListener('mousedown', (e) => this.handleMouseDown(e, productId));
+        slideshow.addEventListener('mousemove', (e) => this.handleMouseMove(e));
+        slideshow.addEventListener('mouseup', (e) => this.handleMouseUp(e, productId));
+        slideshow.addEventListener('mouseleave', (e) => this.handleMouseLeave(e));
+
+        // کلیک روی دات‌ها
+        const dots = slideshow.querySelectorAll('.slider-dot');
+        dots.forEach(dot => {
+            dot.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const index = parseInt(dot.dataset.index);
+                this.showSlide(productId, index);
+            });
+        });
+    }
+
+    handleTouchStart(event, productId) {
+        this.touchStartX = event.touches[0].clientX;
+        event.preventDefault();
+    }
+
+    handleTouchMove(event) {
+        event.preventDefault();
+    }
+
+    handleTouchEnd(event, productId) {
+        this.touchEndX = event.changedTouches[0].clientX;
+        this.handleSwipe(productId);
+        event.preventDefault();
+    }
+
+    handleMouseDown(event, productId) {
+        this.isDragging = true;
+        this.dragStartX = event.clientX;
+        event.preventDefault();
+    }
+
+    handleMouseMove(event) {
+        if (!this.isDragging) return;
+        event.preventDefault();
+    }
+
+    handleMouseUp(event, productId) {
+        if (!this.isDragging) return;
+        
+        const dragEndX = event.clientX;
+        const dragDistance = this.dragStartX - dragEndX;
+        
+        if (Math.abs(dragDistance) > 50) {
+            if (dragDistance > 0) {
+                this.nextSlide(productId);
+            } else {
+                this.prevSlide(productId);
+            }
+        }
+        
+        this.isDragging = false;
+        event.preventDefault();
+    }
+
+    handleMouseLeave(event) {
+        this.isDragging = false;
+    }
+
+    handleSwipe(productId) {
+        const swipeDistance = this.touchStartX - this.touchEndX;
+        const minSwipeDistance = 50;
+        
+        if (Math.abs(swipeDistance) > minSwipeDistance) {
+            if (swipeDistance > 0) {
+                this.nextSlide(productId);
+            } else {
+                this.prevSlide(productId);
+            }
         }
     }
 
@@ -144,7 +248,6 @@ class MenuDisplay {
         if (!container) return;
         
         const slides = container.querySelectorAll('.slide');
-        const dots = container.querySelectorAll('.slider-dot');
         let currentIndex = Array.from(slides).findIndex(slide => slide.classList.contains('active'));
         
         currentIndex = (currentIndex - 1 + slides.length) % slides.length;
@@ -156,7 +259,6 @@ class MenuDisplay {
         if (!container) return;
         
         const slides = container.querySelectorAll('.slide');
-        const dots = container.querySelectorAll('.slider-dot');
         let currentIndex = Array.from(slides).findIndex(slide => slide.classList.contains('active'));
         
         currentIndex = (currentIndex + 1) % slides.length;
@@ -171,7 +273,9 @@ class MenuDisplay {
         dots.forEach(dot => dot.classList.remove('active'));
         
         slides[index].classList.add('active');
-        dots[index].classList.add('active');
+        if (dots[index]) {
+            dots[index].classList.add('active');
+        }
     }
 
     initImageModal() {
@@ -186,19 +290,93 @@ class MenuDisplay {
         this.modalPrev.addEventListener('click', () => this.modalPrevSlide());
         this.modalNext.addEventListener('click', () => this.modalNextSlide());
         
-        // بستن مودال با کلیک خارج
+        // رویدادهای سوایپ برای مودال
+        this.modalSlideshow.addEventListener('touchstart', (e) => this.handleModalTouchStart(e));
+        this.modalSlideshow.addEventListener('touchmove', (e) => this.handleModalTouchMove(e));
+        this.modalSlideshow.addEventListener('touchend', (e) => this.handleModalTouchEnd(e));
+        this.modalSlideshow.addEventListener('mousedown', (e) => this.handleModalMouseDown(e));
+        this.modalSlideshow.addEventListener('mousemove', (e) => this.handleModalMouseMove(e));
+        this.modalSlideshow.addEventListener('mouseup', (e) => this.handleModalMouseUp(e));
+        this.modalSlideshow.addEventListener('mouseleave', (e) => this.handleModalMouseLeave(e));
+        
         this.imageModal.addEventListener('click', (e) => {
             if (e.target === this.imageModal) {
                 this.closeImageModal();
             }
         });
         
-        // بستن با کلید ESC
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 this.closeImageModal();
             }
+            if (e.key === 'ArrowLeft') {
+                this.modalPrevSlide();
+            }
+            if (e.key === 'ArrowRight') {
+                this.modalNextSlide();
+            }
         });
+    }
+
+    handleModalTouchStart(event) {
+        this.touchStartX = event.touches[0].clientX;
+        event.preventDefault();
+    }
+
+    handleModalTouchMove(event) {
+        event.preventDefault();
+    }
+
+    handleModalTouchEnd(event) {
+        this.touchEndX = event.changedTouches[0].clientX;
+        this.handleModalSwipe();
+        event.preventDefault();
+    }
+
+    handleModalMouseDown(event) {
+        this.isDragging = true;
+        this.dragStartX = event.clientX;
+        event.preventDefault();
+    }
+
+    handleModalMouseMove(event) {
+        if (!this.isDragging) return;
+        event.preventDefault();
+    }
+
+    handleModalMouseUp(event) {
+        if (!this.isDragging) return;
+        
+        const dragEndX = event.clientX;
+        const dragDistance = this.dragStartX - dragEndX;
+        
+        if (Math.abs(dragDistance) > 50) {
+            if (dragDistance > 0) {
+                this.modalNextSlide();
+            } else {
+                this.modalPrevSlide();
+            }
+        }
+        
+        this.isDragging = false;
+        event.preventDefault();
+    }
+
+    handleModalMouseLeave(event) {
+        this.isDragging = false;
+    }
+
+    handleModalSwipe() {
+        const swipeDistance = this.touchStartX - this.touchEndX;
+        const minSwipeDistance = 50;
+        
+        if (Math.abs(swipeDistance) > minSwipeDistance) {
+            if (swipeDistance > 0) {
+                this.modalNextSlide();
+            } else {
+                this.modalPrevSlide();
+            }
+        }
     }
 
     openImageModal(images, productName) {
@@ -209,8 +387,6 @@ class MenuDisplay {
         
         this.updateModalSlideshow();
         this.imageModal.style.display = 'block';
-        
-        // جلوگیری از اسکرول body
         document.body.style.overflow = 'hidden';
     }
 
