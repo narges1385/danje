@@ -6,14 +6,14 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400700&family=Marhey:wght@300700&display=swap" rel="stylesheet">
         
-        <link rel="stylesheet" href="menu.css">
+        <link rel="stylesheet" href="../static/css/menu.css">
     </head>
     <body>
         <div class="main1">
             <a href="login.html">ورود</a>
             <p class="title1">کافه دانژه</p>
             <hr class="line">
-            <img src="static/images/logo.JPG" alt="لوگوی کافه دانژه" class="logo">
+            <img src="../static/images/logo.JPG" alt="لوگوی کافه دانژه" class="logo">
         </div>
         <div class="main2">
             <div class="tabs">
@@ -25,22 +25,27 @@
                 <!-- محتوای اطلاعات -->
             </div>
             
-            <div id="menu" class="tab-content" style="display: none;">
-                <div class="iconlists">
-                <ul>
-                    <li><a href="#icon10"><img src="static/images/icon10.JPG"><span class="caption">صبحانه</span></a></li>
-                    <li><a href="#icon9"><img src="static/images/icon9.JPG"><span class="caption">کیک و دسر</span></a></li>
-                    <li><a href="#icon8"><img src="static/images/icon8.JPG"><span class="caption">اسموتی</span></a></li>
-                    <li><a href="#icon7"><img src="static/images/icon7.JPG"><span class="caption">نوشیدنی‌ سرد</span></a></li>
-                    <li><a href="#icon6"><img src="static/images/icon6.JPG"><span class="caption">ماکتیل</span></a></li>
-                    <li><a href="#icon5"><img src="static/images/icon5.JPG"><span class="caption">میلک شیک</span></a></li>
-                    <li><a href="#icon4"><img src="static/images/icon4.JPG"><span class="caption">دمنوش گیاهی</span></a></li>
-                    <li><a href="#icon3"><img src="static/images/icon3.JPG"><span class="caption">چای</span></a></li>
-                    <li><a href="#icon2"><img src="static/images/icon2.JPG"><span class="caption">نوشیدنی‌ سرد بر پایه اسپرسو</span></a></li>
-                    <li><a href="#icon1"><img src="static/images/icon1.JPG"><span class="caption">نوشیدنی‌ گرم بر پایه اسپرسو</span></a></li>
-                </ul>
-                </div>
+                <div id="menu" class="tab-content" style="display: none;">
+                <div class="iconlists-wrapper">
+  <div class="arrow" onclick="scrollIcons(-200)"><</div>
 
+  <div class="iconlists" id="iconScroll">
+    <ul>
+      <li><a href="#icon10"><img src="../static/images/icon10.JPG"><span class="caption">صبحانه</span></a></li>
+      <li><a href="#icon9"><img src="../static/images/icon9.JPG"><span class="caption">کیک و دسر</span></a></li>
+      <li><a href="#icon8"><img src="../static/images/icon8.JPG"><span class="caption">اسموتی</span></a></li>
+      <li><a href="#icon7"><img src="../static/images/icon7.JPG"><span class="caption">نوشیدنی‌ سرد</span></a></li>
+      <li><a href="#icon6"><img src="../static/images/icon6.JPG"><span class="caption">ماکتیل</span></a></li>
+      <li><a href="#icon5"><img src="../static/images/icon5.JPG"><span class="caption">میلک شیک</span></a></li>
+      <li><a href="#icon4"><img src="../static/images/icon4.JPG"><span class="caption">دمنوش گیاهی</span></a></li>
+      <li><a href="#icon3"><img src="../static/images/icon3.JPG"><span class="caption">چای</span></a></li>
+      <li><a href="#icon2"><img src="../static/images/icon2.JPG"><span class="caption">نوشیدنی‌ سرد بر پایه اسپرسو</span></a></li>
+      <li><a href="#icon1"><img src="../static/images/icon1.JPG"><span class="caption">نوشیدنی‌ گرم بر پایه اسپرسو</span></a></li>
+    </ul>
+  </div>
+
+  <div class="arrow" onclick="scrollIcons(200)">></div>
+</div>
                 <!-- دسته بندی‌ها -->
                 <p class="title" id="icon1">نوشیدنی‌ گرم بر پایه اسپرسو</p>
                 <div class="menu1" data-category-id="1">
@@ -111,6 +116,6 @@
             </div>
         </div>
 
-        <script src="menu-display.js"></script>
+        <script src="../static/js/menu.js"></script>
     </body>
 </html>

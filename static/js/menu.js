@@ -86,7 +86,7 @@ class MenuDisplay {
     const div = document.createElement('div');
     div.className = 'product';
     div.style.cssText = `
-        background: #8D7B68;
+        background: #84735f;
         padding: 4vw;
         margin: 2vw 0;
         border-radius: 15px;
@@ -94,6 +94,8 @@ class MenuDisplay {
         font-family: 'El Messiri', sans-serif;
         color: #3d2315;
         overflow: hidden;
+        text-align: center;
+        font-size: 6vw;
     `;
     
     const imagesHTML = this.createProductGallery(item.images, item.name, item.id);
@@ -437,6 +439,7 @@ class MenuDisplay {
 
 // تابع برای تب‌ها
 function showTab(tabName) {
+
     const tabContents = document.querySelectorAll('.tab-content');
     const tabButtons = document.querySelectorAll('.tabs button');
     
@@ -457,3 +460,10 @@ let menuDisplay;
 document.addEventListener('DOMContentLoaded', () => {
     menuDisplay = new MenuDisplay();
 });
+function scrollIcons(amount) {
+    document.getElementById('iconScroll').scrollBy({
+      left: amount,
+      behavior: 'smooth'
+    });
+  }
+

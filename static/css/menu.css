@@ -1,0 +1,378 @@
+html{
+    scroll-behavior: smooth;
+    scroll-padding-top: 120px;
+}
+body{
+    background-color:  #84735f;
+    margin: 0;
+    padding: 0;
+}
+.main1{
+    background-color: #69513a;
+}
+.main2{
+    background-color: #84735f;
+    margin: 2vw;
+    min-height: 100vh;
+}
+a{
+    display: block;
+    font-size: 5vw;
+    margin: 6vw 80vw 0 3vw;
+    padding: 2vw 5vw;
+    background-color: #8D7B68;
+    border-radius: 70px;
+    font-weight: 700;
+    font-family: "El Messiri", sans-serif;
+    color: #3d2315;
+    float: left;
+    text-decoration: none;
+}
+.title1 , .title{
+    font-family: "El Messiri", sans-serif;
+    text-align: center;  
+    color: #533120;
+    text-shadow: 0.5vw 0.7vw #8D7B68;
+    margin: 0;
+    padding: 2vw 0;
+    font-size: 7vw;
+    scroll-margin-top: 120px;
+}
+.title1{
+    font-size: 15vw;
+}
+.line{
+    width: 50vw;
+    border-color: #57321e;
+    background-color: #513222;
+    height: 1px;
+}
+.tabs {
+    display: flex;
+    justify-content: center;           
+    font-family: "El Messiri", sans-serif;
+}
+.tabs button {
+    width: 100%;
+    padding: 2vw 0;
+    border: none;
+    background-color: #84735f;
+    color: #5a341f;
+    font-family: "El Messiri", sans-serif;
+    font-size: 6vw;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+}
+.tabs button.active {
+    background-color: #5a341f;
+    color: #8f7260;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+.tabs button:not(.active):hover {
+    background-color: #6a4935;
+}
+.tab-content {
+    background-color: #9c8b76;
+    padding: 4vw;
+    border-radius: 10px;
+    margin-top: 2vw;
+    color: #3d2315;
+    font-family: "El Messiri", sans-serif;
+    min-height: 50vh;
+}
+img{
+    width: 15vw;
+}
+/* اسکرول افقی با نمایش همیشگی */
+.iconlists{
+    overflow-x: scroll;
+    overflow-y: hidden;
+    white-space: nowrap;
+    max-width: 100%;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #84735f;
+    padding: 10px 0;
+    -webkit-overflow-scrolling: touch;
+    
+    /* اجبار به نمایش اسکرول بار */
+    scrollbar-width: thin;
+    scrollbar-color: #5a341f #84735f;
+}
+
+/* نمایش واضح اسکرول بار */
+.iconlists::-webkit-scrollbar{
+    display: block !important;
+    height: 12px !important;
+    background: #84735f !important;
+}
+
+.iconlists::-webkit-scrollbar-track {
+    background: #84735f !important;
+    border: 1px solid #5a341f !important;
+    border-radius: 6px !important;
+}
+
+.iconlists::-webkit-scrollbar-thumb {
+    background: #5a341f !important;
+    border-radius: 6px !important;
+    border: 2px solid #84735f !important;
+}
+
+.iconlists::-webkit-scrollbar-thumb:hover {
+    background: #3d2315 !important;
+}
+.iconlists ul{
+    display: flex;
+    list-style: none;
+    background-color: #84735f;
+    margin: 0;
+    padding: 0 10px;
+}
+.iconlists li{
+    flex: 0 0 auto;
+}
+.iconlists a{
+    background-color: #84735f;
+    padding: 3vw 4vw;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 0;
+    text-decoration: none;
+}
+.iconlists img{
+    width: 12vw;
+    height: 12vw;
+    object-fit: cover;
+    border-radius: 50%;
+}
+.iconlists-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #84735f;
+}
+
+.arrow {
+  font-weight: bold;
+  font-size: 30px;
+  color: #5a341f;
+  cursor: pointer;
+  user-select: none;
+  padding: 10px;
+}
+.caption{
+    white-space: normal;
+    font-size: 4vw !important;
+    color: white;
+    margin-top: 5px;
+    text-align: center;
+}
+.logo {
+    width: 50vw;
+    padding-bottom: 10vw;
+    margin-left: 25vw; padding-top: 2vw;
+    display: block;
+}
+.menu1 {
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    margin-top: 3vw; 
+    align-items: center;
+}
+
+/* کادر یکسان برای همه آیتم‌ها */
+.menu1 > div {
+    padding: 4vw;
+    margin: 2vw 0;
+    font-family: 'El Messiri', sans-serif;
+    color: #3d2315;
+    overflow: visible;
+    width: 85vw;
+    box-sizing: border-box;
+}
+
+/* کانتینر عکس با سایز کامل */
+.slideshow-container {
+    position: relative;
+    width: 100%;
+    min-height: 250px;
+    border-radius: 15px;
+    overflow: hidden;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #84735f;
+}
+
+.slide {
+    display: none;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.slide.active {
+    display: flex;
+}
+
+.slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: scale-down; /* عکس کامل با حفظ نسبت */
+}
+
+.slider-nav {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 5px;
+    z-index: 10;
+}
+
+.slider-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.5);
+    cursor: pointer;
+    border: none;
+}
+
+.slider-dot.active {
+    background: white;
+}
+
+.gallery-indicator {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 12px;
+    cursor: pointer;
+    z-index: 10;
+}
+
+/* بقیه استایل‌ها */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.9);
+}
+
+.modal-content {
+    position: relative;
+    margin: auto;
+    padding: 0;
+    width: 90%;
+    max-width: 800px;
+    height: 80vh;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: white;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+.close:hover {
+    color: #D2691E;
+}
+
+.slideshow-container-full {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.slide-full {
+    display: none;
+    width: 100%;
+    height: 100%;
+}
+
+.slide-full.active {
+    display: block;
+}
+
+.slide-full img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.prev, .next {
+    display: none;
+}
+
+.dots-container {
+    text-align: center;
+    padding: 20px;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+.dot {
+    cursor: pointer;
+    height: 15px;
+    width: 15px;
+    margin: 0 2px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+    transition: background-color 0.6s ease;
+}
+
+.dot.active, .dot:hover {
+    background-color: #717171;
+}
+
+.empty-message {
+    text-align: center;
+    color: #3d2315;
+    font-style: italic;
+    padding: 2rem;
+    font-family: 'El Messiri', sans-serif;
+}
+
+/* رسپانسیو */
+@media (max-width: 768px) {
+    .iconlists img {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .iconlists a {
+        padding: 2vw 3vw;
+    }
+    
+    .caption {
+        font-size: 2.2vw;
+    }
+}
