@@ -466,5 +466,24 @@ function scrollIcons(amount) {
       behavior: 'smooth'
     });
   }
-  
+document.querySelectorAll('.iconlists a').forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault(); // جلوگیری از اسکرول فوری لینک
+
+    const targetId = link.getAttribute('href');
+    const targetElement = document.querySelector(targetId);
+
+    // اسکرول عمودی نرم به بخش مورد نظر
+    targetElement.scrollIntoView({ behavior: 'smooth' });
+
+    // اسکرول افقی: آیکون موردنظر وسط نوار قرار بگیره
+    const container = document.querySelector('.iconlists');
+    const linkRect = link.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+
+    const scrollLeft = container.scrollLeft + (linkRect.left - containerRect.left) - (container.clientWidth / 2 - linkRect.width / 2);
+    container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+  });
+});
+
 
