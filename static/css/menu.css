@@ -86,76 +86,61 @@ img{
     width: 15vw;
 }
 /* اسکرول افقی با نمایش همیشگی */
-.iconlists{
-    overflow-x: scroll;
-    overflow-y: hidden;
-    white-space: nowrap;
-    max-width: 100%;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: #84735f;
-    padding: 10px 0;
-    -webkit-overflow-scrolling: touch;
-    
-    /* اجبار به نمایش اسکرول بار */
-    scrollbar-width: thin;
-    scrollbar-color: #5a341f #84735f;
-}
 
-/* نمایش واضح اسکرول بار */
-.iconlists::-webkit-scrollbar{
-    display: block !important;
-    height: 12px !important;
-    background: #84735f !important;
+.iconlists::-webkit-scrollbar {
+  height: 12px;
 }
 
 .iconlists::-webkit-scrollbar-track {
-    background: #84735f !important;
-    border: 1px solid #5a341f !important;
-    border-radius: 6px !important;
+  background: #84735f;
+  border: 1px solid #5a341f;
+  border-radius: 6px;
 }
 
 .iconlists::-webkit-scrollbar-thumb {
-    background: #5a341f !important;
-    border-radius: 6px !important;
-    border: 2px solid #84735f !important;
+  background: #5a341f;
+  border-radius: 6px;
+  border: 2px solid #84735f;
 }
 
 .iconlists::-webkit-scrollbar-thumb:hover {
-    background: #3d2315 !important;
+  background: #3d2315;
 }
-.iconlists ul{
-    display: flex;
-    list-style: none;
-    background-color: #84735f;
-    margin: 0;
-    padding: 0 10px;
-}
-.iconlists li{
-    flex: 0 0 auto;
-}
-.iconlists a{
-    background-color: #84735f;
-    padding: 3vw 4vw;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border-radius: 0;
-    text-decoration: none;
-}
-.iconlists img{
-    width: 12vw;
-    height: 12vw;
-    object-fit: cover;
-    border-radius: 50%;
-}
-.iconlists-wrapper {
+
+.iconlists ul {
   display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.iconlists li {
+  flex: 0 0 auto;
+}
+
+.iconlists a {
+  background-color: #84735f;
+  padding: 1vw 2vw; /* کاهش فاصله‌ی بالا و پایین */
+  margin: 0 1vw;     /* فاصله‌ی بین آیکون‌ها */
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 10px;
-  background: #84735f;
+  border-radius: 0;
+  text-decoration: none;
+}
+
+.iconlists img {
+  width: 12vw;
+  height: 12vw;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.caption {
+  font-size: 4vw;
+  color: white;
+  margin-top: 5px;
+  text-align: center;
 }
 
 .arrow {
@@ -165,13 +150,6 @@ img{
   cursor: pointer;
   user-select: none;
   padding: 10px;
-}
-.caption{
-    white-space: normal;
-    font-size: 4vw !important;
-    color: white;
-    margin-top: 5px;
-    text-align: center;
 }
 .logo {
     width: 50vw;
@@ -359,6 +337,25 @@ img{
     font-style: italic;
     padding: 2rem;
     font-family: 'El Messiri', sans-serif;
+}
+.iconlists-wrapper {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: #84735f;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+}
+.iconlists {
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #5a341f #84735f;
 }
 
 /* رسپانسیو */
