@@ -72,7 +72,7 @@ class MenuDisplay {
         container.innerHTML = '';
 
         if (activeItems.length === 0) {
-            container.innerHTML = '<div class="empty-message" style="color: #3d2315; border: 2px solid #5a341f; padding: 3vw 30vw; display: block; font-family: \'El Messiri\', sans-serif;">آیتمی برای نمایش وجود ندارد</div>';
+            container.innerHTML = '<div class="empty-message" style="color: #3d2315; border: 2px solid #5a341f; padding: 3vw ; display: block; font-family: \'El Messiri\', sans-serif; font-size: 4vw;">آیتمی برای نمایش وجود ندارد</div>';
             return;
         }
 
