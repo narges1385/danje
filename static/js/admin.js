@@ -52,13 +52,13 @@ class AdminMenuManager {
             console.log('✅ داده‌ها با موفقیت ذخیره شدند');
             // فقط اگر menuDisplay وجود داشته باشه، داده‌ها رو رفرش کن
             if (typeof menuDisplay !== 'undefined') {
-                await menuDisplay.loadMenuData();
-                menuDisplay.renderAllCategories();
-            } else {
-                // فقط زمانی که menuDisplay نیست
-                this.renderStats();
-                this.renderItemsList();
-            }
+    menuDisplay.menuData = this.menuData; // داده‌های جدید را مستقیم به منوی نمایش بده
+    menuDisplay.renderAllCategories();   // فقط رندر کن، fetch اضافی نکن
+} else {
+    this.renderStats();
+    this.renderItemsList();
+}
+
         } else {
             console.error('❌ خطا در ذخیره داده‌ها');
         }
