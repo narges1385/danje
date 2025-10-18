@@ -11,7 +11,7 @@ class AdminMenuManager {
         this.renderStats();
         this.renderItemsList();
         this.updateCategoryTitle();
-        this.setupEventListeners();
+        this.setupEventListeners(); // ✅ فقط یک بار اجرا شود
     }
 
     async loadMenuData() {
@@ -139,9 +139,12 @@ class AdminMenuManager {
         document.getElementById('itemForm').reset();
         document.getElementById('editItemId').value = '';
         document.getElementById('editItemCategory').value = this.currentCategory;
+
+        // ✅ پاک کردن تصاویر و پیش‌نمایش
+        this.tempImages = [];
         document.getElementById('imagePreview').innerHTML = '';
         document.getElementById('fileInfo').textContent = '';
-        this.tempImages = [];
+
         document.getElementById('itemImage').multiple = true;
         document.getElementById('itemModal').style.display = 'block';
         document.body.style.overflow = 'hidden';
@@ -156,6 +159,8 @@ class AdminMenuManager {
         const files = event.target.files;
         const previewContainer = document.getElementById('imagePreview');
         const fileInfo = document.getElementById('fileInfo');
+
+        // ✅ پاک کردن تصاویر و آرایه قبل از اضافه کردن تصاویر جدید
         previewContainer.innerHTML = '';
         this.tempImages = [];
 
@@ -164,7 +169,7 @@ class AdminMenuManager {
             Array.from(files).forEach((file, i) => {
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    this.tempImages[i] = e.target.result;
+                    this.tempImages.push(e.target.result); // ✅ push به جای index
                     const imgContainer = document.createElement('div');
                     imgContainer.style.position = 'relative';
                     imgContainer.style.display = 'inline-block';
@@ -224,32 +229,40 @@ class AdminMenuManager {
         document.getElementById('itemName').value = item.name;
         document.getElementById('itemPrice').value = item.price;
         document.getElementById('itemActive').value = item.active.toString();
+
+        // ✅ پاک کردن و بارگذاری تصاویر فعلی
         this.tempImages = item.images ? [...item.images] : [];
         this.updateImagePreview();
+
         document.getElementById('itemModal').style.display = 'block';
         document.body.style.overflow = 'hidden';
     }
 
     handleFormSubmit(event) {
         event.preventDefault();
+
+        // ✅ غیرفعال کردن دکمه ذخیره برای جلوگیری از submit دوبار
+        const submitBtn = event.target.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+
         const itemId = document.getElementById('editItemId').value;
         const category = document.getElementById('editItemCategory').value;
         const formData = {
             name: document.getElementById('itemName').value,
             price: parseInt(document.getElementById('itemPrice').value),
             active: document.getElementById('itemActive').value === 'true',
-            images: [...this.tempImages] // آرایه جداگانه برای جلوگیری از reference اشتباه
+            images: [...this.tempImages]
         };
 
         if (itemId) this.updateItem(parseInt(itemId), category, formData);
         else this.addItem(category, formData);
 
         this.hideItemForm();
+        submitBtn.disabled = false;
     }
 
     addItem(category, itemData) {
         if (!this.menuData[category]) this.menuData[category] = [];
-
         const newItem = { id: Date.now(), ...itemData };
         this.menuData[category].push(newItem);
         this.saveMenuData();
