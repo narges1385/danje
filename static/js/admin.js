@@ -19,10 +19,7 @@ class AdminMenuManager {
             const response = await fetch('/api/menu');
             if (response.ok) {
                 const data = await response.json();
-                if (!data || Object.keys(data).length === 0) {
-                    return this.initializeEmptyData();
-                }
-                return data;
+                return data && Object.keys(data).length ? data : this.initializeEmptyData();
             } else {
                 console.error('خطا در دریافت داده از سرور');
                 return this.initializeEmptyData();
@@ -34,39 +31,33 @@ class AdminMenuManager {
     }
 
     initializeEmptyData() {
-        return {
-            '1': [], '2': [], '3': [], '4': [], '5': [],
-            '6': [], '7': [], '8': [], '9': [], '10': []
-        };
+        return { '1': [], '2': [], '3': [], '4': [], '5': [], '6': [], '7': [], '8': [], '9': [], '10': [] };
     }
 
     async saveMenuData() {
-    try {
-        const response = await fetch('/api/menu', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(this.menuData)
-        });
+        try {
+            const response = await fetch('/api/menu', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(this.menuData)
+            });
 
-        if (response.ok) {
-            console.log('✅ داده‌ها با موفقیت ذخیره شدند');
-            // فقط اگر menuDisplay وجود داشته باشه، داده‌ها رو رفرش کن
-            if (typeof menuDisplay !== 'undefined') {
-    menuDisplay.menuData = this.menuData; // داده‌های جدید را مستقیم به منوی نمایش بده
-    menuDisplay.renderAllCategories();   // فقط رندر کن، fetch اضافی نکن
-} else {
-    this.renderStats();
-    this.renderItemsList();
-}
-
-        } else {
-            console.error('❌ خطا در ذخیره داده‌ها');
+            if (response.ok) {
+                console.log('✅ داده‌ها با موفقیت ذخیره شدند');
+                if (typeof menuDisplay !== 'undefined') {
+                    await menuDisplay.loadMenuData();
+                    menuDisplay.renderAllCategories();
+                } else {
+                    this.renderStats();
+                    this.renderItemsList();
+                }
+            } else {
+                console.error('❌ خطا در ذخیره داده‌ها');
+            }
+        } catch (error) {
+            console.error('خطا در ارتباط با سرور:', error);
         }
-    } catch (error) {
-        console.error('خطا در ارتباط با سرور:', error);
     }
-}
-
 
     onCategoryChange() {
         this.currentCategory = document.getElementById('categorySelect').value;
@@ -107,7 +98,7 @@ class AdminMenuManager {
         const itemsList = document.getElementById('itemsList');
         const items = this.menuData[this.currentCategory] || [];
 
-        if (items.length === 0) {
+        if (!items.length) {
             itemsList.innerHTML = '<div class="empty-message">هیچ آیتمی در این دسته وجود ندارد</div>';
             return;
         }
@@ -119,7 +110,7 @@ class AdminMenuManager {
     createAdminItemElement(item) {
         const div = document.createElement('div');
         div.className = 'admin-item';
-        const firstImage = item.images && item.images.length > 0 ? item.images[0] : 'static/images/placeholder.jpg';
+        const firstImage = item.images && item.images.length ? item.images[0] : 'static/images/placeholder.jpg';
         const imagesCount = item.images ? item.images.length : 0;
 
         div.innerHTML = `
@@ -170,9 +161,10 @@ class AdminMenuManager {
 
         if (files.length > 0) {
             fileInfo.textContent = `${files.length} فایل انتخاب شده`;
-            for (let i = 0; i < files.length; i++) {
+            Array.from(files).forEach((file, i) => {
                 const reader = new FileReader();
                 reader.onload = (e) => {
+                    this.tempImages[i] = e.target.result;
                     const imgContainer = document.createElement('div');
                     imgContainer.style.position = 'relative';
                     imgContainer.style.display = 'inline-block';
@@ -186,10 +178,9 @@ class AdminMenuManager {
                     imgContainer.appendChild(img);
                     imgContainer.appendChild(removeBtn);
                     previewContainer.appendChild(imgContainer);
-                    this.tempImages.push(e.target.result);
                 };
-                reader.readAsDataURL(files[i]);
-            }
+                reader.readAsDataURL(file);
+            });
         } else {
             fileInfo.textContent = '';
         }
@@ -247,28 +238,19 @@ class AdminMenuManager {
             name: document.getElementById('itemName').value,
             price: parseInt(document.getElementById('itemPrice').value),
             active: document.getElementById('itemActive').value === 'true',
-            images: this.tempImages
+            images: [...this.tempImages] // آرایه جداگانه برای جلوگیری از reference اشتباه
         };
 
-        if (itemId) {
-            this.updateItem(parseInt(itemId), category, formData);
-        } else {
-            this.addItem(category, formData);
-        }
+        if (itemId) this.updateItem(parseInt(itemId), category, formData);
+        else this.addItem(category, formData);
 
         this.hideItemForm();
     }
 
     addItem(category, itemData) {
-        if (!this.menuData[category]) {
-            this.menuData[category] = [];
-        }
+        if (!this.menuData[category]) this.menuData[category] = [];
 
-        const newItem = {
-            id: Date.now(),
-            ...itemData
-        };
-
+        const newItem = { id: Date.now(), ...itemData };
         this.menuData[category].push(newItem);
         this.saveMenuData();
         alert('آیتم با موفقیت افزوده شد!');
@@ -277,12 +259,8 @@ class AdminMenuManager {
     updateItem(itemId, category, newData) {
         const items = this.menuData[category];
         const itemIndex = items.findIndex(item => item.id === itemId);
-
         if (itemIndex !== -1) {
-            this.menuData[category][itemIndex] = {
-                ...this.menuData[category][itemIndex],
-                ...newData
-            };
+            this.menuData[category][itemIndex] = { ...this.menuData[category][itemIndex], ...newData };
             this.saveMenuData();
             alert('آیتم با موفقیت ویرایش شد!');
         }
@@ -291,7 +269,6 @@ class AdminMenuManager {
     toggleItemStatus(itemId) {
         const items = this.menuData[this.currentCategory];
         const item = items.find(item => item.id === itemId);
-
         if (item) {
             item.active = !item.active;
             this.saveMenuData();
@@ -300,51 +277,46 @@ class AdminMenuManager {
     }
 
     deleteItem(itemId) {
-        if (confirm('آیا از حذف این آیتم مطمئنید؟')) {
-            this.menuData[this.currentCategory] = this.menuData[this.currentCategory]
-                .filter(item => item.id !== itemId);
-            this.saveMenuData();
-            alert('آیتم با موفقیت حذف شد!');
-        }
+        if (!confirm('آیا از حذف این آیتم مطمئنید؟')) return;
+        this.menuData[this.currentCategory] = this.menuData[this.currentCategory].filter(item => item.id !== itemId);
+        this.saveMenuData();
+        alert('آیتم با موفقیت حذف شد!');
     }
 
     setupEventListeners() {
-        // بستن مودال با کلیک بیرون از آن
+        // بستن مودال با کلیک بیرون
         window.onclick = (event) => {
             const modal = document.getElementById('itemModal');
-            if (event.target === modal) {
-                this.hideItemForm();
-            }
+            if (event.target === modal) this.hideItemForm();
         };
 
-        // بستن مودال با کلید ESC
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                this.hideItemForm();
-            }
-        });
+        // بستن مودال با ESC
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') this.hideItemForm(); });
 
         // تغییر دسته
         const categorySelect = document.getElementById('categorySelect');
-        if (categorySelect) {
+        if (categorySelect && !categorySelect.dataset.listenerAdded) {
             categorySelect.addEventListener('change', () => this.onCategoryChange());
+            categorySelect.dataset.listenerAdded = true;
         }
 
-        // ارسال فرم
+        // فرم
         const itemForm = document.getElementById('itemForm');
-        if (itemForm) {
+        if (itemForm && !itemForm.dataset.listenerAdded) {
             itemForm.addEventListener('submit', (e) => this.handleFormSubmit(e));
+            itemForm.dataset.listenerAdded = true;
         }
 
-        // پیش‌نمایش عکس‌ها
+        // پیش‌نمایش عکس
         const itemImageInput = document.getElementById('itemImage');
-        if (itemImageInput) {
+        if (itemImageInput && !itemImageInput.dataset.listenerAdded) {
             itemImageInput.addEventListener('change', (e) => this.previewImage(e));
+            itemImageInput.dataset.listenerAdded = true;
         }
     }
 }
 
-// توابع سراسری برای اکسپورت و ایمپورت داده‌ها
+// Export / Import داده‌ها
 function exportData() {
     const dataStr = JSON.stringify(window.adminManager.menuData, null, 2);
     const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
@@ -358,7 +330,6 @@ function importData() {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = '.json';
-
     input.onchange = e => {
         const file = e.target.files[0];
         const reader = new FileReader();
@@ -368,7 +339,7 @@ function importData() {
                 window.adminManager.menuData = importedData;
                 window.adminManager.saveMenuData();
                 alert('داده با موفقیت وارد شد!');
-            } catch (error) {
+            } catch {
                 alert('خطا در وارد کردن داده! فایل معتبر نیست.');
             }
         };
@@ -377,7 +348,5 @@ function importData() {
     input.click();
 }
 
-// راه‌اندازی پنل مدیریت
-document.addEventListener('DOMContentLoaded', () => {
-    window.adminManager = new AdminMenuManager();
-});
+// راه‌اندازی
+document.addEventListener('DOMContentLoaded', () => { window.adminManager = new AdminMenuManager(); });
