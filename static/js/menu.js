@@ -14,10 +14,11 @@ class MenuDisplay {
         await this.loadMenuData();
         this.renderAllCategories();
         this.initImageModal();
-        
+
         // رفرش خودکار هر 30 ثانیه
-        setInterval(() => {
-            this.loadMenuData().then(() => this.renderAllCategories());
+        setInterval(async () => {
+            await this.loadMenuData();
+            this.renderAllCategories();
         }, 30000);
     }
 
@@ -42,16 +43,8 @@ class MenuDisplay {
         } else {
             // داده اولیه برای 10 دسته‌بندی
             this.menuData = {
-                '1': [],
-                '2': [],
-                '3': [],
-                '4': [],
-                '5': [],
-                '6': [],
-                '7': [],
-                '8': [],
-                '9': [],
-                '10': []
+                '1': [], '2': [], '3': [], '4': [], '5': [],
+                '6': [], '7': [], '8': [], '9': [], '10': []
             };
         }
     }
@@ -72,7 +65,7 @@ class MenuDisplay {
         container.innerHTML = '';
 
         if (activeItems.length === 0) {
-            container.innerHTML = '<div class="empty-message" style="color: #3d2315; border: 2px solid #5a341f; padding: 3vw ; display: block; font-family: \'El Messiri\', sans-serif; font-size: 4vw;">آیتمی برای نمایش وجود ندارد</div>';
+            container.innerHTML = '<div class="empty-message" style="color: #3d2315; border: 2px solid #5a341f; padding: 3vw; display: block; font-family: \'El Messiri\', sans-serif; font-size: 4vw;">آیتمی برای نمایش وجود ندارد</div>';
             return;
         }
 
@@ -83,43 +76,41 @@ class MenuDisplay {
     }
 
     createItemElement(item) {
-    const div = document.createElement('div');
-    div.className = 'product';
-    div.style.cssText = `
-        background: #84735f;
-        padding: 4vw;
-        margin: 2vw 0;
-        border-radius: 15px;
-        border: 2px solid #5a341f;
-        font-family: 'El Messiri', sans-serif;
-        color: #3d2315;
-        overflow: hidden;
-        text-align: center;
-        font-size: 6vw;
-    `;
-    
-    const imagesHTML = this.createProductGallery(item.images, item.name, item.id);
-    
-    div.innerHTML = `
-        <div class="product-gallery">
-            ${imagesHTML}
-        </div>
-        <div class="product-info">
-            <h3 class="product-name">${item.name}</h3>
-            <p class="product-price">${item.price.toLocaleString()} تومان</p>
-        </div>
-    `;
-    
-    // اضافه کردن event listeners برای سوایپ
-    this.attachSwipeEvents(div, item.id);
-    
-    return div;
-}
+        const div = document.createElement('div');
+        div.className = 'product';
+        div.style.cssText = `
+            background: #84735f;
+            padding: 4vw;
+            margin: 2vw 0;
+            border-radius: 15px;
+            border: 2px solid #5a341f;
+            font-family: 'El Messiri', sans-serif;
+            color: #3d2315;
+            overflow: hidden;
+            text-align: center;
+            font-size: 6vw;
+        `;
+        
+        const imagesHTML = this.createProductGallery(item.images, item.name, item.id);
+        div.innerHTML = `
+            <div class="product-gallery">
+                ${imagesHTML}
+            </div>
+            <div class="product-info">
+                <h3 class="product-name">${item.name}</h3>
+                <p class="product-price">${item.price.toLocaleString()} تومان</p>
+            </div>
+        `;
+
+        this.attachSwipeEvents(div, item.id);
+        return div;
+    }
+
     createProductGallery(images, productName, productId) {
         if (!images || images.length === 0) {
             return '<img src="static/images/placeholder.jpg" alt="بدون عکس" style="width: 100%; height: 200px; object-fit: cover; border-radius: 10px;">';
         }
-        
+
         if (images.length === 1) {
             return `
                 <div class="slideshow-container" data-product-id="${productId}">
@@ -131,7 +122,6 @@ class MenuDisplay {
         } else {
             let slidesHTML = '';
             let dotsHTML = '';
-            
             images.forEach((image, index) => {
                 const activeClass = index === 0 ? 'active' : '';
                 slidesHTML += `
@@ -139,10 +129,9 @@ class MenuDisplay {
                         <img src="${image}" alt="${productName} - تصویر ${index + 1}">
                     </div>
                 `;
-                
                 dotsHTML += `<button class="slider-dot ${activeClass}" data-index="${index}"></button>`;
             });
-            
+
             return `
                 <div class="slideshow-container" data-product-id="${productId}">
                     ${slidesHTML}
@@ -162,122 +151,61 @@ class MenuDisplay {
         const slideshow = container.querySelector('.slideshow-container');
         if (!slideshow) return;
 
-        // رویدادهای لمسی برای موبایل
         slideshow.addEventListener('touchstart', (e) => this.handleTouchStart(e, productId));
         slideshow.addEventListener('touchmove', (e) => this.handleTouchMove(e));
         slideshow.addEventListener('touchend', (e) => this.handleTouchEnd(e, productId));
-
-        // رویدادهای موس برای دسکتاپ
         slideshow.addEventListener('mousedown', (e) => this.handleMouseDown(e, productId));
         slideshow.addEventListener('mousemove', (e) => this.handleMouseMove(e));
         slideshow.addEventListener('mouseup', (e) => this.handleMouseUp(e, productId));
         slideshow.addEventListener('mouseleave', (e) => this.handleMouseLeave(e));
 
-        // کلیک روی دات‌ها
         const dots = slideshow.querySelectorAll('.slider-dot');
         dots.forEach(dot => {
             dot.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const index = parseInt(dot.dataset.index);
-                this.showSlide(productId, index);
+                this.showSlide(slideshow, index);
             });
         });
     }
 
-    handleTouchStart(event, productId) {
-        this.touchStartX = event.touches[0].clientX;
-        event.preventDefault();
-    }
-
-    handleTouchMove(event) {
-        event.preventDefault();
-    }
-
-    handleTouchEnd(event, productId) {
-        this.touchEndX = event.changedTouches[0].clientX;
-        this.handleSwipe(productId);
-        event.preventDefault();
-    }
-
-    handleMouseDown(event, productId) {
-        this.isDragging = true;
-        this.dragStartX = event.clientX;
-        event.preventDefault();
-    }
-
-    handleMouseMove(event) {
-        if (!this.isDragging) return;
-        event.preventDefault();
-    }
-
-    handleMouseUp(event, productId) {
-        if (!this.isDragging) return;
-        
+    handleTouchStart(event, productId) { this.touchStartX = event.touches[0].clientX; event.preventDefault(); }
+    handleTouchMove(event) { event.preventDefault(); }
+    handleTouchEnd(event, productId) { this.touchEndX = event.changedTouches[0].clientX; this.handleSwipe(productId); event.preventDefault(); }
+    handleMouseDown(event, productId) { this.isDragging = true; this.dragStartX = event.clientX; event.preventDefault(); }
+    handleMouseMove(event) { if (!this.isDragging) return; event.preventDefault(); }
+    handleMouseUp(event, productId) { 
+        if (!this.isDragging) return; 
         const dragEndX = event.clientX;
         const dragDistance = this.dragStartX - dragEndX;
-        
-        if (Math.abs(dragDistance) > 50) {
-            if (dragDistance > 0) {
-                this.nextSlide(productId);
-            } else {
-                this.prevSlide(productId);
-            }
-        }
-        
-        this.isDragging = false;
-        event.preventDefault();
+        if (Math.abs(dragDistance) > 50) dragDistance > 0 ? this.nextSlide(productId) : this.prevSlide(productId);
+        this.isDragging = false; event.preventDefault(); 
     }
-
-    handleMouseLeave(event) {
-        this.isDragging = false;
-    }
-
+    handleMouseLeave(event) { this.isDragging = false; }
     handleSwipe(productId) {
         const swipeDistance = this.touchStartX - this.touchEndX;
-        const minSwipeDistance = 50;
-        
-        if (Math.abs(swipeDistance) > minSwipeDistance) {
-            if (swipeDistance > 0) {
-                this.nextSlide(productId);
-            } else {
-                this.prevSlide(productId);
-            }
-        }
+        if (Math.abs(swipeDistance) > 50) swipeDistance > 0 ? this.nextSlide(productId) : this.prevSlide(productId);
     }
 
-    prevSlide(productId) {
-        const container = document.querySelector(`.slideshow-container[data-product-id="${productId}"]`);
-        if (!container) return;
-        
-        const slides = container.querySelectorAll('.slide');
-        let currentIndex = Array.from(slides).findIndex(slide => slide.classList.contains('active'));
-        
-        currentIndex = (currentIndex - 1 + slides.length) % slides.length;
-        this.showSlide(container, currentIndex);
-    }
+    prevSlide(productId) { this.changeSlide(productId, -1); }
+    nextSlide(productId) { this.changeSlide(productId, 1); }
 
-    nextSlide(productId) {
+    changeSlide(productId, direction) {
         const container = document.querySelector(`.slideshow-container[data-product-id="${productId}"]`);
         if (!container) return;
-        
         const slides = container.querySelectorAll('.slide');
         let currentIndex = Array.from(slides).findIndex(slide => slide.classList.contains('active'));
-        
-        currentIndex = (currentIndex + 1) % slides.length;
+        currentIndex = (currentIndex + direction + slides.length) % slides.length;
         this.showSlide(container, currentIndex);
     }
 
     showSlide(container, index) {
         const slides = container.querySelectorAll('.slide');
         const dots = container.querySelectorAll('.slider-dot');
-        
         slides.forEach(slide => slide.classList.remove('active'));
         dots.forEach(dot => dot.classList.remove('active'));
-        
         slides[index].classList.add('active');
-        if (dots[index]) {
-            dots[index].classList.add('active');
-        }
+        if (dots[index]) dots[index].classList.add('active');
     }
 
     initImageModal() {
@@ -287,126 +215,38 @@ class MenuDisplay {
         this.modalNext = this.imageModal.querySelector('.next');
         this.modalClose = this.imageModal.querySelector('.close');
         this.dotsContainer = this.imageModal.querySelector('.dots-container');
-        
+
         this.modalClose.addEventListener('click', () => this.closeImageModal());
         this.modalPrev.addEventListener('click', () => this.modalPrevSlide());
         this.modalNext.addEventListener('click', () => this.modalNextSlide());
-        
-        // رویدادهای سوایپ برای مودال
-        this.modalSlideshow.addEventListener('touchstart', (e) => this.handleModalTouchStart(e));
-        this.modalSlideshow.addEventListener('touchmove', (e) => this.handleModalTouchMove(e));
-        this.modalSlideshow.addEventListener('touchend', (e) => this.handleModalTouchEnd(e));
-        this.modalSlideshow.addEventListener('mousedown', (e) => this.handleModalMouseDown(e));
-        this.modalSlideshow.addEventListener('mousemove', (e) => this.handleModalMouseMove(e));
-        this.modalSlideshow.addEventListener('mouseup', (e) => this.handleModalMouseUp(e));
-        this.modalSlideshow.addEventListener('mouseleave', (e) => this.handleModalMouseLeave(e));
-        
-        this.imageModal.addEventListener('click', (e) => {
-            if (e.target === this.imageModal) {
-                this.closeImageModal();
-            }
-        });
-        
+
+        this.imageModal.addEventListener('click', (e) => { if (e.target === this.imageModal) this.closeImageModal(); });
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                this.closeImageModal();
-            }
-            if (e.key === 'ArrowLeft') {
-                this.modalPrevSlide();
-            }
-            if (e.key === 'ArrowRight') {
-                this.modalNextSlide();
-            }
+            if (e.key === 'Escape') this.closeImageModal();
+            if (e.key === 'ArrowLeft') this.modalPrevSlide();
+            if (e.key === 'ArrowRight') this.modalNextSlide();
         });
-    }
-
-    handleModalTouchStart(event) {
-        this.touchStartX = event.touches[0].clientX;
-        event.preventDefault();
-    }
-
-    handleModalTouchMove(event) {
-        event.preventDefault();
-    }
-
-    handleModalTouchEnd(event) {
-        this.touchEndX = event.changedTouches[0].clientX;
-        this.handleModalSwipe();
-        event.preventDefault();
-    }
-
-    handleModalMouseDown(event) {
-        this.isDragging = true;
-        this.dragStartX = event.clientX;
-        event.preventDefault();
-    }
-
-    handleModalMouseMove(event) {
-        if (!this.isDragging) return;
-        event.preventDefault();
-    }
-
-    handleModalMouseUp(event) {
-        if (!this.isDragging) return;
-        
-        const dragEndX = event.clientX;
-        const dragDistance = this.dragStartX - dragEndX;
-        
-        if (Math.abs(dragDistance) > 50) {
-            if (dragDistance > 0) {
-                this.modalNextSlide();
-            } else {
-                this.modalPrevSlide();
-            }
-        }
-        
-        this.isDragging = false;
-        event.preventDefault();
-    }
-
-    handleModalMouseLeave(event) {
-        this.isDragging = false;
-    }
-
-    handleModalSwipe() {
-        const swipeDistance = this.touchStartX - this.touchEndX;
-        const minSwipeDistance = 50;
-        
-        if (Math.abs(swipeDistance) > minSwipeDistance) {
-            if (swipeDistance > 0) {
-                this.modalNextSlide();
-            } else {
-                this.modalPrevSlide();
-            }
-        }
     }
 
     openImageModal(images, productName) {
         if (!images || images.length === 0) return;
-        
         this.currentProductImages = images;
         this.currentSlideIndex = 0;
-        
         this.updateModalSlideshow();
         this.imageModal.style.display = 'block';
         document.body.style.overflow = 'hidden';
     }
 
-    closeImageModal() {
-        this.imageModal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-    }
+    closeImageModal() { this.imageModal.style.display = 'none'; document.body.style.overflow = 'auto'; }
 
     updateModalSlideshow() {
         this.modalSlideshow.innerHTML = '';
         this.dotsContainer.innerHTML = '';
-        
         this.currentProductImages.forEach((image, index) => {
             const slide = document.createElement('div');
             slide.className = `slide ${index === 0 ? 'active' : ''}`;
             slide.innerHTML = `<img src="${image}" alt="تصویر ${index + 1}">`;
             this.modalSlideshow.appendChild(slide);
-            
             const dot = document.createElement('span');
             dot.className = `dot ${index === 0 ? 'active' : ''}`;
             dot.addEventListener('click', () => this.showModalSlide(index));
@@ -418,72 +258,41 @@ class MenuDisplay {
         this.currentSlideIndex = index;
         const slides = this.modalSlideshow.querySelectorAll('.slide');
         const dots = this.dotsContainer.querySelectorAll('.dot');
-        
         slides.forEach(slide => slide.classList.remove('active'));
         dots.forEach(dot => dot.classList.remove('active'));
-        
         slides[this.currentSlideIndex].classList.add('active');
         dots[this.currentSlideIndex].classList.add('active');
     }
 
-    modalPrevSlide() {
-        this.currentSlideIndex = (this.currentSlideIndex - 1 + this.currentProductImages.length) % this.currentProductImages.length;
-        this.showModalSlide(this.currentSlideIndex);
-    }
-
-    modalNextSlide() {
-        this.currentSlideIndex = (this.currentSlideIndex + 1) % this.currentProductImages.length;
-        this.showModalSlide(this.currentSlideIndex);
-    }
+    modalPrevSlide() { this.currentSlideIndex = (this.currentSlideIndex - 1 + this.currentProductImages.length) % this.currentProductImages.length; this.showModalSlide(this.currentSlideIndex); }
+    modalNextSlide() { this.currentSlideIndex = (this.currentSlideIndex + 1) % this.currentProductImages.length; this.showModalSlide(this.currentSlideIndex); }
 }
 
-// تابع برای تب‌ها
-function showTab(tabName) {
+let menuDisplay;
+document.addEventListener('DOMContentLoaded', () => { menuDisplay = new MenuDisplay(); });
 
-    const tabContents = document.querySelectorAll('.tab-content');
-    const tabButtons = document.querySelectorAll('.tabs button');
-    
-    tabContents.forEach(content => {
-        content.style.display = 'none';
-    });
-    
-    tabButtons.forEach(button => {
-        button.classList.remove('active');
-    });
-    
+// تب‌ها
+function showTab(tabName) {
+    document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+    document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
     document.getElementById(tabName).style.display = 'block';
     document.getElementById(tabName + 'Btn').classList.add('active');
 }
 
-// راه‌اندازی
-let menuDisplay;
-document.addEventListener('DOMContentLoaded', () => {
-    menuDisplay = new MenuDisplay();
-});
-function scrollIcons(amount) {
-    document.getElementById('iconScroll').scrollBy({
-      left: amount,
-      behavior: 'smooth'
-    });
-  }
+// اسکرول آیکون‌ها
+function scrollIcons(amount) { document.getElementById('iconScroll').scrollBy({ left: amount, behavior: 'smooth' }); }
+
 document.querySelectorAll('.iconlists a').forEach(link => {
-  link.addEventListener('click', e => {
-    e.preventDefault(); // جلوگیری از اسکرول فوری لینک
+    link.addEventListener('click', e => {
+        e.preventDefault();
+        const targetId = link.getAttribute('href');
+        const targetElement = document.querySelector(targetId);
+        targetElement.scrollIntoView({ behavior: 'smooth' });
 
-    const targetId = link.getAttribute('href');
-    const targetElement = document.querySelector(targetId);
-
-    // اسکرول عمودی نرم به بخش مورد نظر
-    targetElement.scrollIntoView({ behavior: 'smooth' });
-
-    // اسکرول افقی: آیکون موردنظر وسط نوار قرار بگیره
-    const container = document.querySelector('.iconlists');
-    const linkRect = link.getBoundingClientRect();
-    const containerRect = container.getBoundingClientRect();
-
-    const scrollLeft = container.scrollLeft + (linkRect.left - containerRect.left) - (container.clientWidth / 2 - linkRect.width / 2);
-    container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
-  });
+        const container = document.querySelector('.iconlists');
+        const linkRect = link.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        const scrollLeft = container.scrollLeft + (linkRect.left - containerRect.left) - (container.clientWidth / 2 - linkRect.width / 2);
+        container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+    });
 });
-
-
