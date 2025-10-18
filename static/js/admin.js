@@ -41,29 +41,32 @@ class AdminMenuManager {
     }
 
     async saveMenuData() {
-        try {
-            const response = await fetch('/api/menu', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(this.menuData)
-            });
+    try {
+        const response = await fetch('/api/menu', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(this.menuData)
+        });
 
-            if (response.ok) {
-                console.log('✅ داده‌ها با موفقیت ذخیره شدند');
-                // رفرش منوی مشتری بعد از ذخیره
-                if (typeof menuDisplay !== 'undefined') {
-                    await menuDisplay.loadMenuData();
-                    menuDisplay.renderAllCategories();
-                }
+        if (response.ok) {
+            console.log('✅ داده‌ها با موفقیت ذخیره شدند');
+            // فقط اگر menuDisplay وجود داشته باشه، داده‌ها رو رفرش کن
+            if (typeof menuDisplay !== 'undefined') {
+                await menuDisplay.loadMenuData();
+                menuDisplay.renderAllCategories();
             } else {
-                console.error('❌ خطا در ذخیره داده‌ها');
+                // فقط زمانی که menuDisplay نیست
+                this.renderStats();
+                this.renderItemsList();
             }
-        } catch (error) {
-            console.error('خطا در ارتباط با سرور:', error);
+        } else {
+            console.error('❌ خطا در ذخیره داده‌ها');
         }
-        this.renderStats();
-        this.renderItemsList();
+    } catch (error) {
+        console.error('خطا در ارتباط با سرور:', error);
     }
+}
+
 
     onCategoryChange() {
         this.currentCategory = document.getElementById('categorySelect').value;

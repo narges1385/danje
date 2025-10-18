@@ -14,7 +14,7 @@ class MenuDisplay {
         await this.loadMenuData();
         this.renderAllCategories();
         this.initImageModal();
-
+        
         // رفرش خودکار هر 30 ثانیه
         setInterval(async () => {
             await this.loadMenuData();
@@ -41,7 +41,6 @@ class MenuDisplay {
         if (savedData) {
             this.menuData = JSON.parse(savedData);
         } else {
-            // داده اولیه برای 10 دسته‌بندی
             this.menuData = {
                 '1': [], '2': [], '3': [], '4': [], '5': [],
                 '6': [], '7': [], '8': [], '9': [], '10': []
@@ -65,7 +64,7 @@ class MenuDisplay {
         container.innerHTML = '';
 
         if (activeItems.length === 0) {
-            container.innerHTML = '<div class="empty-message" style="color: #3d2315; border: 2px solid #5a341f; padding: 3vw; display: block; font-family: \'El Messiri\', sans-serif; font-size: 4vw;">آیتمی برای نمایش وجود ندارد</div>';
+            container.innerHTML = '<div class="empty-message" style="color: #3d2315; border: 2px solid #5a341f; padding: 3vw ; display: block; font-family: \'El Messiri\', sans-serif; font-size: 4vw;">آیتمی برای نمایش وجود ندارد</div>';
             return;
         }
 
@@ -92,6 +91,7 @@ class MenuDisplay {
         `;
         
         const imagesHTML = this.createProductGallery(item.images, item.name, item.id);
+        
         div.innerHTML = `
             <div class="product-gallery">
                 ${imagesHTML}
@@ -101,7 +101,7 @@ class MenuDisplay {
                 <p class="product-price">${item.price.toLocaleString()} تومان</p>
             </div>
         `;
-
+        
         this.attachSwipeEvents(div, item.id);
         return div;
     }
@@ -110,28 +110,19 @@ class MenuDisplay {
         if (!images || images.length === 0) {
             return '<img src="static/images/placeholder.jpg" alt="بدون عکس" style="width: 100%; height: 200px; object-fit: cover; border-radius: 10px;">';
         }
-
+        
         if (images.length === 1) {
-            return `
-                <div class="slideshow-container" data-product-id="${productId}">
-                    <div class="slide active">
-                        <img src="${images[0]}" alt="${productName}">
-                    </div>
-                </div>
-            `;
+            return `<div class="slideshow-container" data-product-id="${productId}"><div class="slide active"><img src="${images[0]}" alt="${productName}"></div></div>`;
         } else {
             let slidesHTML = '';
             let dotsHTML = '';
+            
             images.forEach((image, index) => {
                 const activeClass = index === 0 ? 'active' : '';
-                slidesHTML += `
-                    <div class="slide ${activeClass}">
-                        <img src="${image}" alt="${productName} - تصویر ${index + 1}">
-                    </div>
-                `;
+                slidesHTML += `<div class="slide ${activeClass}"><img src="${image}" alt="${productName} - تصویر ${index + 1}"></div>`;
                 dotsHTML += `<button class="slider-dot ${activeClass}" data-index="${index}"></button>`;
             });
-
+            
             return `
                 <div class="slideshow-container" data-product-id="${productId}">
                     ${slidesHTML}
@@ -175,7 +166,7 @@ class MenuDisplay {
     handleMouseDown(event, productId) { this.isDragging = true; this.dragStartX = event.clientX; event.preventDefault(); }
     handleMouseMove(event) { if (!this.isDragging) return; event.preventDefault(); }
     handleMouseUp(event, productId) { 
-        if (!this.isDragging) return; 
+        if (!this.isDragging) return;
         const dragEndX = event.clientX;
         const dragDistance = this.dragStartX - dragEndX;
         if (Math.abs(dragDistance) > 50) dragDistance > 0 ? this.nextSlide(productId) : this.prevSlide(productId);
@@ -189,13 +180,12 @@ class MenuDisplay {
 
     prevSlide(productId) { this.changeSlide(productId, -1); }
     nextSlide(productId) { this.changeSlide(productId, 1); }
-
-    changeSlide(productId, direction) {
+    changeSlide(productId, step) {
         const container = document.querySelector(`.slideshow-container[data-product-id="${productId}"]`);
         if (!container) return;
         const slides = container.querySelectorAll('.slide');
         let currentIndex = Array.from(slides).findIndex(slide => slide.classList.contains('active'));
-        currentIndex = (currentIndex + direction + slides.length) % slides.length;
+        currentIndex = (currentIndex + step + slides.length) % slides.length;
         this.showSlide(container, currentIndex);
     }
 
@@ -221,6 +211,7 @@ class MenuDisplay {
         this.modalNext.addEventListener('click', () => this.modalNextSlide());
 
         this.imageModal.addEventListener('click', (e) => { if (e.target === this.imageModal) this.closeImageModal(); });
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') this.closeImageModal();
             if (e.key === 'ArrowLeft') this.modalPrevSlide();
@@ -237,7 +228,10 @@ class MenuDisplay {
         document.body.style.overflow = 'hidden';
     }
 
-    closeImageModal() { this.imageModal.style.display = 'none'; document.body.style.overflow = 'auto'; }
+    closeImageModal() {
+        this.imageModal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
 
     updateModalSlideshow() {
         this.modalSlideshow.innerHTML = '';
@@ -247,6 +241,7 @@ class MenuDisplay {
             slide.className = `slide ${index === 0 ? 'active' : ''}`;
             slide.innerHTML = `<img src="${image}" alt="تصویر ${index + 1}">`;
             this.modalSlideshow.appendChild(slide);
+
             const dot = document.createElement('span');
             dot.className = `dot ${index === 0 ? 'active' : ''}`;
             dot.addEventListener('click', () => this.showModalSlide(index));
@@ -264,31 +259,30 @@ class MenuDisplay {
         dots[this.currentSlideIndex].classList.add('active');
     }
 
-    modalPrevSlide() { this.currentSlideIndex = (this.currentSlideIndex - 1 + this.currentProductImages.length) % this.currentProductImages.length; this.showModalSlide(this.currentSlideIndex); }
-    modalNextSlide() { this.currentSlideIndex = (this.currentSlideIndex + 1) % this.currentProductImages.length; this.showModalSlide(this.currentSlideIndex); }
+    modalPrevSlide() { this.showModalSlide((this.currentSlideIndex - 1 + this.currentProductImages.length) % this.currentProductImages.length); }
+    modalNextSlide() { this.showModalSlide((this.currentSlideIndex + 1) % this.currentProductImages.length); }
 }
-
-let menuDisplay;
-document.addEventListener('DOMContentLoaded', () => { menuDisplay = new MenuDisplay(); });
 
 // تب‌ها
 function showTab(tabName) {
-    document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
-    document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+    const tabContents = document.querySelectorAll('.tab-content');
+    const tabButtons = document.querySelectorAll('.tabs button');
+    tabContents.forEach(content => content.style.display = 'none');
+    tabButtons.forEach(button => button.classList.remove('active'));
     document.getElementById(tabName).style.display = 'block';
     document.getElementById(tabName + 'Btn').classList.add('active');
 }
 
 // اسکرول آیکون‌ها
-function scrollIcons(amount) { document.getElementById('iconScroll').scrollBy({ left: amount, behavior: 'smooth' }); }
-
+function scrollIcons(amount) {
+    document.getElementById('iconScroll').scrollBy({ left: amount, behavior: 'smooth' });
+}
 document.querySelectorAll('.iconlists a').forEach(link => {
     link.addEventListener('click', e => {
         e.preventDefault();
         const targetId = link.getAttribute('href');
         const targetElement = document.querySelector(targetId);
         targetElement.scrollIntoView({ behavior: 'smooth' });
-
         const container = document.querySelector('.iconlists');
         const linkRect = link.getBoundingClientRect();
         const containerRect = container.getBoundingClientRect();
@@ -296,3 +290,7 @@ document.querySelectorAll('.iconlists a').forEach(link => {
         container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
     });
 });
+
+// راه‌اندازی
+let menuDisplay;
+document.addEventListener('DOMContentLoaded', () => { menuDisplay = new MenuDisplay(); });
